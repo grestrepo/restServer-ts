@@ -1,6 +1,23 @@
 import { Router } from 'express';
-import { createUser } from '../controllers';
+import { createUser, getUsers, getUser, updateUser } from '../controllers';
+
+import { validatorHandler, existeEmail, existeId } from '../../core/middlewares';
+import { createUserSchema, getUserValidator } from '../schemas';
 
 export const userRouter = Router();
 
-userRouter.post('/', createUser);
+userRouter.get('/', getUsers);
+
+userRouter.get('/:id', [
+  validatorHandler(getUserValidator, 'params'),
+], getUser);
+
+userRouter.post('/', [
+  validatorHandler(createUserSchema, 'body'),
+  existeEmail
+], createUser);
+
+userRouter.put('/:id', [
+  validatorHandler(getUserValidator, 'params'),
+  existeId
+], updateUser);
