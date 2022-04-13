@@ -2,11 +2,14 @@ import express, {Application} from 'express';
 import cors from 'cors';
 
 import { dbConnection } from './core/config';
+
 import { userRouter, authRouter } from './users/routes';
+import { productRouter } from './products/routes';
 
 interface IPath {
   users: string;
   auth: string;
+  products: string;
 }
 
 export class Server {
@@ -20,7 +23,8 @@ export class Server {
     this.port = '3000';
     this.path = {
       users: '/api/v1/users',
-      auth: '/api/v1/auth'
+      auth: '/api/v1/auth',
+      products: '/api/v1/products'
     };
 
     //ConectarDb
@@ -37,16 +41,16 @@ export class Server {
     await dbConnection();
   }
 
-  private routes(){
-    this.app.use(this.path.users, userRouter);
-    this.app.use(this.path.auth, authRouter);
-  }
-
   private middlewares(){
     this.app.use(cors({origin: true}));
     this.app.use(express.json());
   }
 
+  private routes(){
+    this.app.use(this.path.users, userRouter);
+    this.app.use(this.path.auth, authRouter);
+    this.app.use(this.path.products, productRouter);
+  }
 
   listen(){
     this.app.listen(this.port, () => {
