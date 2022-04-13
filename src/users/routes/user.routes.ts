@@ -1,15 +1,15 @@
 import { Router } from 'express';
-import { createUser, getUsers, getUser, updateUser } from '../controllers';
+import { createUser, getUsers, getUser, updateUser, deleteUser } from '../controllers';
 
-import { validatorHandler, existeEmail, existeId } from '../../core/middlewares';
-import { createUserSchema, getUserValidator } from '../schemas';
+import { validatorHandler, existeEmail, existeId, validarJWT } from '../../core/middlewares';
+import { createUserSchema, getUserSchema, updateUserSchema } from '../schemas';
 
 export const userRouter = Router();
 
 userRouter.get('/', getUsers);
 
 userRouter.get('/:id', [
-  validatorHandler(getUserValidator, 'params'),
+  validatorHandler(getUserSchema, 'params'),
 ], getUser);
 
 userRouter.post('/', [
@@ -18,6 +18,13 @@ userRouter.post('/', [
 ], createUser);
 
 userRouter.put('/:id', [
-  validatorHandler(getUserValidator, 'params'),
+  validarJWT,
+  validatorHandler(getUserSchema, 'params'),
+  validatorHandler(updateUserSchema, 'body'),
   existeId
 ], updateUser);
+
+userRouter.delete('/:id', [
+  validarJWT,
+  validatorHandler(getUserSchema, 'params')
+], deleteUser);

@@ -24,6 +24,11 @@ export const updateUserSchema = Joi.object({
   state: state
 });
 
-export const getUserValidator = Joi.object({
+export const getUserSchema = Joi.object({
   id: id.required()
+});
+
+export const loginUserSchema = Joi.object({
+  email: email.required(),
+  password: password.required(),
 });

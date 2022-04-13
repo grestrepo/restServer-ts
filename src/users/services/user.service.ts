@@ -11,13 +11,8 @@ export class UserService {
     return users;
   }
 
-  async getUser(id: string){
-    try {
-      const user = await User.findById(id);
-      return user;
-    } catch (error) {
-      return null;
-    }
+  getUser(id: string){
+    return User.findById(id);
   }
 
   async createUser(payload: CreateUser){
@@ -27,13 +22,7 @@ export class UserService {
       ...payload
     });
 
-    try {
-      const user = await newUser.save();
-      return user;
-    } catch (error) {
-      return null;
-    }
-    
+    return await newUser.save();    
   }
 
   async updateUser(id: string, payload: UpdateUser){
@@ -41,6 +30,15 @@ export class UserService {
       const user = await User.findByIdAndUpdate(id, payload, {
         new: true
       });
+      return user;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async deleteUser(id: string){
+    try {
+      const user = await User.findByIdAndDelete(id);
       return user;
     } catch (error) {
       return null;

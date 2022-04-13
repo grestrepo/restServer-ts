@@ -2,10 +2,11 @@ import express, {Application} from 'express';
 import cors from 'cors';
 
 import { dbConnection } from './core/config';
-import { userRouter } from './users/routes';
+import { userRouter, authRouter } from './users/routes';
 
 interface IPath {
-  users: string
+  users: string;
+  auth: string;
 }
 
 export class Server {
@@ -18,7 +19,8 @@ export class Server {
     this.app = express();
     this.port = '3000';
     this.path = {
-      users: '/api/v1/users'
+      users: '/api/v1/users',
+      auth: '/api/v1/auth'
     };
 
     //ConectarDb
@@ -37,6 +39,7 @@ export class Server {
 
   private routes(){
     this.app.use(this.path.users, userRouter);
+    this.app.use(this.path.auth, authRouter);
   }
 
   private middlewares(){

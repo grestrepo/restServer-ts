@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ObjectSchema } from 'joi';
+import bcrypt from 'bcrypt';
 
 import { User } from '../../users/models';
 
@@ -53,6 +54,36 @@ export const existeId = async (req: Request, res: Response, next: NextFunction) 
     return res.status(400).json({
       ok: false,
       message: `Ocurrió un error`
+    });
+  }
+};
+
+export const validarLogin = async (req: Request, res: Response, next: NextFunction) => {
+  const {email, password} = req.body;
+  try {
+    const user = await User.findOne({email});
+    if(!user){
+      return res.status(404).json({
+        ok: false,
+        message: `No existe el usuario con el correo ${email}`
+      });
+    }
+
+    const validPassword = bcrypt.compareSync(password, user.password);
+
+    if(!validPassword){
+      return res.status(400).json({
+        ok: false,
+        message: `La contraseña no es correcta`
+      });
+    }
+    
+    req.uid = user._id;
+    return next();
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      message: `Ocurrió un Error`
     });
   }
 };
